@@ -1,8 +1,9 @@
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 function Upload() {
   let [searchParams] = useSearchParams();
+  let navigate = useNavigate();
   let state = decodeURIComponent(searchParams.get("state"));
 
   const handleUpload = (event) => {
@@ -17,8 +18,12 @@ function Upload() {
         body: form
       };
 
-      fetch('http://localhost:8080/upload', request)
-        .then(response => console.log(response.text()))
+      fetch('/upload', request)
+        .then(response => {
+          response.json().then(result => {
+            navigate(`/result?id=${result['id']}`);
+          });
+        })
     }
   }
 

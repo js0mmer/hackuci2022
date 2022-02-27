@@ -12,7 +12,7 @@ class Home extends React.Component {
     return (
       <div>
         <h1>hello world</h1>
-        <a href="http://localhost:8080/login">Login</a>
+        <a href="/login">Login</a>
       </div>
     );
   }

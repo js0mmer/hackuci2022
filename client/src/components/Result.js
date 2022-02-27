@@ -9,7 +9,7 @@ function Result() {
 
   return (
       <div>
-          <iframe style={{ borderRadius: '12px' }} title='Playlist' src={`https://open.spotify.com/embed/playlist/${id}?utm_source=generator`} width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+          <iframe style={{ borderRadius: '12px' }} title='Playlist' src={`https://open.spotify.com/embed/playlist/${id}?utm_source=generator`} width="100%" height={380} frameBorder={0} allowFullScreen={false} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
       </div>
   );
 }

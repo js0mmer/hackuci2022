@@ -11,6 +11,7 @@ const express = require('express');
 const app = express()
 const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read', 'ugc-image-upload'];
 var sessions = new Map();
+var sessionTimestamp = new Map();
 
 dotenv.config({ path: ".env" });
 
@@ -108,7 +109,6 @@ function analyzeMood(colors) {
 }
 
 async function makePlaylist(spotifyApi, valences, image, imageName, res) {
-  let playlistURL;
   let playlistId;
 
   let name = imageName.split('.');
@@ -116,20 +116,23 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
 
   await spotifyApi.createPlaylist(name.join(''), { 'description': 'Created by PlayPic' , 'public': false })
     .then(data => {
-      playlistURL = data.body.external_urls.spotify;
       playlistId = data.body.id;
       // console.log(playlistId);
     }, err => {
       console.log('Failed to create playlist', err);
       res.send(null);
+      fs.unlinkSync(image); // remove image since fail, no longer need
       return;
     });
 
   let compressed_img = (await sharp(image).resize(800).toBuffer()).toString('base64');
   
   await spotifyApi.uploadCustomPlaylistCoverImage(playlistId, compressed_img)
-    .then(() => {}, err => {
+    .then(() => {
+      fs.unlinkSync(image);
+    }, err => {
       console.log('Failed to add custom playlist cover image', err);
+      fs.unlinkSync(image);
     });
 
   let topArtistIds;
@@ -163,12 +166,29 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
 
   await spotifyApi.addTracksToPlaylist(playlistId, recommendations)
     .then(() => { 
-      res.send(playlistURL);
+      res.send({ id: playlistId });
     }, err => {
       console.log('Failed to add tracks to playlist', err);
       res.send(null);
       return;
     });
+}
+
+const THIRTY_MIN = 1000 * 60 * 30;
+
+function purgeSessions() {
+  let sessionsToRemove = [];
+
+  for (let [state, time] of sessionTimestamp) {
+    if (Date.now() - time > THIRTY_MIN) {
+      sessions.delete(state);
+      sessionsToRemove.push(state); // probably bad idea to modify map while iterating over it
+    }
+  }
+
+  for (const state of sessionsToRemove) {
+    sessionTimestamp.delete(state);
+  }
 }
 
 // for debugging
@@ -214,6 +234,7 @@ app.post('/upload', (req, res) => {
 
         const state = decodeURIComponent(req.body.state);
         const spotifyApi = sessions.get(state);
+        sessions.delete(state);
 
         makePlaylist(spotifyApi, valences, req.file.path, req.file.originalname, res);
       });
@@ -229,7 +250,9 @@ app.get('/login', (req, res) => {
     redirectUri: process.env.REDIRECT_URI
   });
 
+  purgeSessions();
   sessions.set(state, spotifyApi);
+  sessionTimestamp.set(state, Date.now());
 
   let url = spotifyApi.createAuthorizeURL(scopes, state)
   
@@ -251,11 +274,17 @@ app.get('/callback', async (req, res) => {
 
     res.redirect('http://localhost:3000/upload?state=' + encodeURIComponent(state));
   } catch(err) {
-    res.redirect('http://localhost:3000/?error=true');
+    res.redirect('/?error=true');
     console.log(err);
   }
 })
 
-app.use('/images', express.static('uploads'))
+// app.use('/images', express.static('uploads'))
+app.use(express.static(path.join(__dirname, '../client/build/')));
+
+// All other GET requests not handled before will return our React app
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+});
 
 module.exports = app;
