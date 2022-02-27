@@ -53,7 +53,7 @@ function Upload() {
           Select Your Image
         </h2>
         <label className="btn" id="upload-btn">
-          <input id="upload" type="file" onChange={handleUpload} name="image" />
+          <input id="upload" type="file" accept=".jpg,.jpeg,.png" onChange={handleUpload} name="image" />
           Upload
         </label>
       </main>
