@@ -2,6 +2,8 @@ body {
     background-color: #D4E3E1;
     
     font-family: "Roboto Condensed", sans-serif;
+
+    overflow:hidden;
 }
 
 header {
