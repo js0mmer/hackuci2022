@@ -136,7 +136,7 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
       console.log(topArtistIds);
     }, err => {
       console.log('Failed to get top artists', err);
-      res.send(null);
+      // res.send(null);
       return;
     });
 
@@ -152,7 +152,7 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
     }, err => {
       console.log(valences);
         console.log('Failed to get recommendations', err);
-        res.send(null);
+        // res.send(null);
         return;
     });
 
@@ -161,7 +161,7 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
       res.send({ id: playlistId });
     }, err => {
       console.log('Failed to add tracks to playlist', err);
-      res.send(null);
+      // res.send(null);
       return;
     });
 }
