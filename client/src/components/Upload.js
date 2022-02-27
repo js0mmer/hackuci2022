@@ -23,7 +23,7 @@ class Upload extends React.Component {
             };
 
             fetch('http://localhost:8080/upload', request)
-                .then(response => console.log(response.text()))
+                .then(response => console.log(response.json()))
           }
     }
 

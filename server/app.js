@@ -33,31 +33,6 @@ const multer = require('multer')
 
 const express = require('express')
 const app = express()
-const port = 8080
-
-function rgbToHSV(r, g, b) {
-  r /= 255, g /= 255, b /= 255;
-
-  var max = Math.max(r, g, b), min = Math.min(r, g, b);
-  var h, s, v = max;
-
-  var d = max - min;
-  s = max == 0 ? 0 : d / max;
-
-  if (max == min) {
-    h = 0; // achromatic
-  } else {
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-
-    h /= 6;
-  }
-
-  return [ h, s, v ];
-}
 
 function getVibrance(color) {
   return Math.max(color[0] / 255, color[1] / 255, color[2] / 255);
@@ -108,11 +83,44 @@ const imageFilter = function(req, file, cb) {
   cb(null, true);
 };
 
+// 0 is cold 1 is warm 0.5 is neutral
+function getWarmth(color) {
+  return (color[0] - color[1]) / 255;
+}
+
+function getValences(warmth) {
+  return { min: Math.max(0, warmth - 0.2), max: Math.min(1, warmth + 0.2)}
+}
+
+function analyzeMood(colors) {
+  warmths = [];
+  for(const color of colors) {
+    warmth = getWarmth(color);
+    vibrance = getVibrance(color);
+    if (vibrance > 10) { // ignore dark/black colors (< 10% vibrance)
+      warmths.push(warmth);
+    }
+  }
+
+  avg_warmth = sum(warmths) / warmths.length;
+
+  return getValences(warmth)
+}
+
+function sum(array) {
+  total = 0;
+
+  for(let val in array) {
+    total += val;
+  }
+
+  return total;
+}
+
 app.post('/upload', (req, res) => {
   console.log('got upload');
-  // res.send('got upload');
 
-  // 'file' is the name of our file input field in the HTML form
+  // 'image' is the name of our file input field in the HTML form
   let upload = multer({ storage: storage, fileFilter: imageFilter }).single('image');
 
   upload(req, res, function(err) {
@@ -131,21 +139,25 @@ app.post('/upload', (req, res) => {
       else if (err) {
           return res.send(err);
       }
-
-      // Display uploaded image for user validation
-      res.send(`You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`);
-  });
-
-  // console.log(req)
     
-  // getColors(req.file).then(colors => {
-  //   // `colors` is an array of color objects
-  //   c = colors.map(color => color.hex())
-  //   console.log(c)
-  //   rgb = hexToRGB(c[0])
-  //   res.send(c + 'rgb: ' + rgb + ' hsv: ' + rgbToHSV(rgb[0], rgb[1], rgb[2]))
-  // });
+      getColors(fs.readFileSync(req.file.path), req.file.mimetype).then(colors => {
+        // `colors` is an array of color objects
+        c = colors.map(color => color.hex())
+        console.log(c)
+
+        valences = analyzeMood(c);
+
+        response = {
+          valences: valences,
+          path: req.file.path
+        }
+
+        res.send(response)
+      });
+  });
 });
+
+app.use('/images', express.static('uploads'))
 
 // app.listen(port, () => {
 //   console.log(`Listening on port ${port}`)
