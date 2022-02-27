@@ -101,6 +101,7 @@ function analyzeMood(colors) {
     saturation = (sats - grays) / (sats + grays) / 2 + .5;
   }
 
+  console.log(warms, colds, sats, grays);
   return getValences(.7 * avg_warmth + .3 * saturation)
 }
 
@@ -147,9 +148,9 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
     .then(data => {
       let tracks = data.body.tracks;
       recommendations = tracks.map(track => track.uri);
-      console.log(valences);
       console.log(recommendations);
     }, err => {
+      console.log(valences);
         console.log('Failed to get recommendations', err);
         res.send(null);
         return;
