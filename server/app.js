@@ -38,6 +38,30 @@ function getVibrance(color) {
   return Math.max(color[0] / 255, color[1] / 255, color[2] / 255);
 }
 
+function rgbToHSV(r, g, b) {
+  r /= 255, g /= 255, b /= 255;
+
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h, s, v = max;
+
+  var d = max - min;
+  s = max == 0 ? 0 : d / max;
+
+  if (max == min) {
+    h = 0; // achromatic
+  } else {
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+
+    h /= 6;
+  }
+
+  return [ h, s, v ];
+}
+
 function hexToRGB(color) {
     r = parseInt(color.substring(1, 3), 16);
     g = parseInt(color.substring(3, 5), 16);
@@ -85,32 +109,57 @@ const imageFilter = function(req, file, cb) {
 
 // 0 is cold 1 is warm 0.5 is neutral
 function getWarmth(color) {
-  return (color[0] - color[1]) / 255;
+  return ((color[0] / 255 - color[2] / 255) + 1) / 2;
 }
 
-function getValences(warmth) {
-  return { min: Math.max(0, warmth - 0.2), max: Math.min(1, warmth + 0.2)}
+function getValences(val) {
+  return { min: Math.max(0, val - 0.2), max: Math.min(1, val + 0.2)}
 }
 
 function analyzeMood(colors) {
   warmths = [];
+  warms = 0;
+  colds = 0;
+  sats = 0;
+  grays = 0;
   for(const color of colors) {
-    warmth = getWarmth(color);
-    vibrance = getVibrance(color);
-    if (vibrance > 10) { // ignore dark/black colors (< 10% vibrance)
-      warmths.push(warmth);
+    rgb = hexToRGB(color);
+    hsv = rgbToHSV(rgb[0], rgb[1], rgb[2])
+    // warmth = getWarmth(rgb);
+    vibrance = hsv[2]
+    // console.log(vibrance)
+    if (vibrance > .1) { // ignore dark/black colors (< 10% vibrance)
+      // warmths.push(warmth);
+      if (rgb[0] - 10 > rgb[2]) {
+        warms++;
+      } else if (rgb[2] - 10 > rgb[0]) {
+        colds++;
+      }
+    }
+
+    if (hsv[1] > 0.6) {
+      sats++;
+    } else if (hsv[1] < 0.4) {
+      grays++;
     }
   }
 
-  avg_warmth = sum(warmths) / warmths.length;
+  // avg_warmth = 0
 
-  return getValences(warmth)
+  // if(warmths.length > 0) {
+  //   avg_warmth = sum(warmths) / warmths.length;
+  // }
+
+  avg_warmth = (warms - colds) / (warms + colds) / 2 + .5;
+  saturation = (sats - grays) / (sats + grays) / 2 + .5;
+
+  return getValences(.7 * avg_warmth + .3 * saturation)
 }
 
 function sum(array) {
   total = 0;
 
-  for(let val in array) {
+  for(const val of array) {
     total += val;
   }
 
