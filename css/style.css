@@ -1,0 +1,31 @@
+body {
+    background-color: #D4E3E1;
+    
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+h1 {
+    color: #BD6838;
+
+    font-family: "Unica One", sans-serif;
+    font-weight: 400;
+    font-size: 70px;
+}
+
+h2 {
+    color: #BD6838;
+
+    font-size: 95px;
+    font-weight: 300;
+}
+
+h3 {
+    color: #6D716E;
+
+    font-size: 48px;
+    font-weight: 300;
+}
+
+button {
+    font-family: "Ubuntu Condensed", sans-serif;
+}
