@@ -8,7 +8,7 @@ const sharp = require('sharp');
 const express = require('express');
 
 const app = express()
-const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read', 'ugc-image-upload'];
+const scopes = ['playlist-modify-public', 'playlist-modify-private', 'user-top-read', 'ugc-image-upload'];
 var sessions = new Map();
 var sessionTimestamp = new Map();
 
@@ -248,8 +248,8 @@ app.get('/login', (req, res) => {
   res.redirect(url);
 });
 
-// const BASE_URL = process.env.NODE_ENV == 'PRODUCTION' ? '' : 'http://localhost:3000';
-const BASE_URL = '';
+const BASE_URL = process.env.NODE_ENV == 'PRODUCTION' ? '' : 'http://localhost:3000';
+// const BASE_URL = '';
 
 app.get('/callback', async (req, res) => {
   console.log(req.query);
