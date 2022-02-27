@@ -4,7 +4,7 @@
 #### By Lisa, Minha, Jacob, Aidan
 
 
-Check it out <a href="https://en.wikipedia.org/wiki/Poo" target="_blank">here!</a>
+<a href="https://en.wikipedia.org/wiki/Poo" target="_blank">Check it out here!</a>
 
 
 <!---
