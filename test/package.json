@@ -13,5 +13,8 @@
     "express": "^4.17.3",
     "get-image-colors": "^4.0.1",
     "spotify-web-api-node": "^5.0.2"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
