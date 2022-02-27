@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import Upload from './components/Upload';
+import Result from './components/Result';
 import './css/bootstrap.min.css';
 import './css/main.css';
 import './css/all.min.css';
@@ -12,6 +13,7 @@ const AppRouter = () => (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="upload" element={<Upload />} />
+      <Route path="result" element={<Result />} />
     </Routes>
   </BrowserRouter>
 );
