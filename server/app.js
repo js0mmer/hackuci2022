@@ -1,7 +1,6 @@
 const dotenv = require("dotenv");
 const SpotifyWebApi = require('spotify-web-api-node');
 const path = require('path')
-const fs = require('fs')
 const getColors = require('get-image-colors')
 const multer = require('multer')
 const crypto = require('crypto');
@@ -51,17 +50,6 @@ function hexToRGB(color) {
     b = parseInt(color.substring(5, 7), 16);
     return [r, g, b]
 }
-
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-      cb(null, 'uploads/');
-  },
-
-  // By default, multer removes file extensions so let's add them back
-  filename: function(req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
 
 const imageFilter = function(req, file, cb) {
   // Accept images only
@@ -121,18 +109,14 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
     }, err => {
       console.log('Failed to create playlist', err);
       res.send(null);
-      fs.unlinkSync(image); // remove image since fail, no longer need
       return;
     });
 
   let compressed_img = (await sharp(image).resize(800).toBuffer()).toString('base64');
   
   await spotifyApi.uploadCustomPlaylistCoverImage(playlistId, compressed_img)
-    .then(() => {
-      fs.unlinkSync(image);
-    }, err => {
+    .then(() => {}, err => {
       console.log('Failed to add custom playlist cover image', err);
-      fs.unlinkSync(image);
     });
 
   let topArtistIds;
@@ -202,7 +186,7 @@ app.post('/upload', (req, res) => {
   console.log('got upload');
 
   // 'image' is the name of our file input field in the HTML form
-  let upload = multer({ storage: storage, fileFilter: imageFilter }).single('image');
+  let upload = multer({ /* storage: storage, */ fileFilter: imageFilter }).single('image');
 
   upload(req, res, err => {
     // req.file contains information of uploaded file
@@ -217,8 +201,10 @@ app.post('/upload', (req, res) => {
     } else if (err) {
         return res.send(err);
     }
+
+    let image = Buffer.from(req.file.buffer);
   
-    getColors(fs.readFileSync(req.file.path), req.file.mimetype)
+    getColors(image, req.file.mimetype)
       .then(async colors => {
         // `colors` is an array of color objects
         c = colors.map(color => color.hex())
@@ -226,17 +212,11 @@ app.post('/upload', (req, res) => {
 
         let valences = analyzeMood(c);
 
-        response = {
-          valences: valences,
-          path: req.file.path,
-          state: req.body.state
-        }
-
         const state = decodeURIComponent(req.body.state);
         const spotifyApi = sessions.get(state);
         sessions.delete(state);
 
-        makePlaylist(spotifyApi, valences, req.file.path, req.file.originalname, res);
+        makePlaylist(spotifyApi, valences, image, req.file.originalname, res);
       });
   });
 });
