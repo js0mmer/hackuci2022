@@ -260,6 +260,8 @@ app.get('/login', (req, res) => {
   res.redirect(url);
 });
 
+const BASE_URL = process.env.NODE_ENV == 'PRODUCTION' ? '' : 'http://localhost:3000';
+
 app.get('/callback', async (req, res) => {
   console.log(req.query);
   const { code, state } = req.query;
@@ -272,9 +274,9 @@ app.get('/callback', async (req, res) => {
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
 
-    res.redirect('http://localhost:3000/upload?state=' + encodeURIComponent(state));
+    res.redirect(BASE_URL + '/upload?state=' + encodeURIComponent(state));
   } catch(err) {
-    res.redirect('/?error=true');
+    res.redirect(BASE_URL + '/?error=true');
     console.log(err);
   }
 })
