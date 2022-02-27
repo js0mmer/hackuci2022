@@ -89,9 +89,17 @@ function analyzeMood(colors) {
       grays++;
     }
   }
+  
+  let avg_warmth = 0;
+  let saturation = 0;
 
-  avg_warmth = (warms - colds) / (warms + colds) / 2 + .5;
-  saturation = (sats - grays) / (sats + grays) / 2 + .5;
+  if (warms + colds != 0) {
+    avg_warmth = (warms - colds) / (warms + colds) / 2 + .5;
+  }
+
+  if (sats + grays != 0) {
+    saturation = (sats - grays) / (sats + grays) / 2 + .5;
+  }
 
   return getValences(.7 * avg_warmth + .3 * saturation)
 }
