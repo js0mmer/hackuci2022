@@ -21,7 +21,6 @@ function Upload() {
       fetch('/upload', request)
         .then(response => {
           response.json().then(result => {
-            console.log(result);
             navigate(`/result?id=${result['id']}`);
           });
         })

@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Converts a photo into a Spotify playlist based on the mood of the photo",
   "main": "server/bin/www",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./server/bin/www",
