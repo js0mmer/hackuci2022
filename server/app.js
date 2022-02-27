@@ -246,7 +246,8 @@ app.get('/login', (req, res) => {
   res.redirect(url);
 });
 
-const BASE_URL = process.env.NODE_ENV == 'PRODUCTION' ? '' : 'http://localhost:3000';
+// const BASE_URL = process.env.NODE_ENV == 'PRODUCTION' ? '' : 'http://localhost:3000';
+const BASE_URL = '';
 
 app.get('/callback', async (req, res) => {
   console.log(req.query);
