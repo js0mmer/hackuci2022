@@ -10,7 +10,7 @@ const express = require('express');
 
 const app = express()
 const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read', 'ugc-image-upload'];
-const sessions = new Map();
+var sessions = new Map();
 
 dotenv.config({ path: ".env" });
 
@@ -76,19 +76,17 @@ function getValences(val) {
 }
 
 function analyzeMood(colors) {
-  warmths = [];
   warms = 0;
   colds = 0;
   sats = 0;
   grays = 0;
-  for(const color of colors) {
+
+  for (const color of colors) {
     rgb = hexToRGB(color);
     hsv = rgbToHSV(rgb[0], rgb[1], rgb[2])
-    // warmth = getWarmth(rgb);
     vibrance = hsv[2]
-    // console.log(vibrance)
+
     if (vibrance > .1) { // ignore dark/black colors (< 10% vibrance)
-      // warmths.push(warmth);
       if (rgb[0] - 10 > rgb[2]) {
         warms++;
       } else if (rgb[2] - 10 > rgb[0]) {
@@ -109,11 +107,14 @@ function analyzeMood(colors) {
   return getValences(.7 * avg_warmth + .3 * saturation)
 }
 
-async function makePlaylist(spotifyApi, valences, image, res) {
+async function makePlaylist(spotifyApi, valences, image, imageName, res) {
   let playlistURL;
   let playlistId;
 
-  await spotifyApi.createPlaylist('among us', { 'description': 'Description' , 'public': false })
+  let name = imageName.split('.');
+  name.pop();
+
+  await spotifyApi.createPlaylist(name.join(''), { 'description': 'Created by PlayPic' , 'public': false })
     .then(data => {
       playlistURL = data.body.external_urls.spotify;
       playlistId = data.body.id;
@@ -170,6 +171,13 @@ async function makePlaylist(spotifyApi, valences, image, res) {
     });
 }
 
+// for debugging
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.post('/upload', (req, res) => {
   console.log('got upload');
 
@@ -207,7 +215,7 @@ app.post('/upload', (req, res) => {
         const state = decodeURIComponent(req.body.state);
         const spotifyApi = sessions.get(state);
 
-        makePlaylist(spotifyApi, valences, req.file.path, res);
+        makePlaylist(spotifyApi, valences, req.file.path, req.file.originalname, res);
       });
   });
 });
@@ -241,21 +249,13 @@ app.get('/callback', async (req, res) => {
     spotifyApi.setAccessToken(access_token);
     spotifyApi.setRefreshToken(refresh_token);
 
-    tokens.set(state, access_token);
-
     res.redirect('http://localhost:3000/upload?state=' + encodeURIComponent(state));
   } catch(err) {
-    res.redirect('http://localhost:3000/error');
+    res.redirect('http://localhost:3000/?error=true');
+    console.log(err);
   }
 })
 
 app.use('/images', express.static('uploads'))
-
-// for debugging
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 
 module.exports = app;
