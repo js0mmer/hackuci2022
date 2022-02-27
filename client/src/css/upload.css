@@ -1,0 +1,70 @@
+.upload ~ body {
+    background-color: #BD6838;
+    
+    font-family: "Roboto Condensed", sans-serif;
+
+    overflow:hidden;
+}
+
+.upload header {
+    position: relative;
+    left: 5%;
+}
+
+.upload main {
+    position:absolute;
+    top: 30%;
+    left: 50%;
+}
+
+.upload h1 {
+    color: #EDFFFC;
+
+    font-family: "Unica One", sans-serif;
+    font-weight: 400;
+    font-size: 45px;
+
+    margin-left: 2%;
+}
+
+.upload h2 {
+    color: #C4ECE5;
+
+    font-size: 60px;
+    font-weight: 300;
+
+    margin-bottom: 6%;
+}
+
+.upload #upload-btn {
+    background-color: #CCE4E0;
+    border: none;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    padding-left: 9%;
+    padding-right: 9%;
+
+    color: #6D716E;
+    font-size: 25px;
+    font-family: "Ubuntu Condensed", sans-serif;
+
+    box-shadow: 4px 4px 15px 1px #6D716E45;
+}
+
+.upload input[type="file"] {
+    display: none;
+}
+
+.upload #logo {
+    position: absolute;
+    bottom: -12%;
+    left: -3%;
+}
+
+.upload #headphones {
+    float: left;
+
+    position: absolute;
+    top: -30%;
+    right: 110%;
+}
