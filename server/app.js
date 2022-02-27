@@ -147,6 +147,7 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
     .then(data => {
       let tracks = data.body.tracks;
       recommendations = tracks.map(track => track.uri);
+      console.log(valences);
       console.log(recommendations);
     }, err => {
         console.log('Failed to get recommendations', err);
