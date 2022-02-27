@@ -30,7 +30,7 @@ class Home extends React.Component {
             thousand songs
           </h2>
           <h3>Turn an image into a personal playlist</h3>
-          <a href="/login">Login</a>
+          <a className="btn" href="/login">Login</a>
         </main>
       </div>
     );

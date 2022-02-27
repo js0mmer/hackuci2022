@@ -111,10 +111,8 @@ async function makePlaylist(spotifyApi, valences, image, imageName, res) {
       res.send(null);
       return;
     });
-
-  let compressed_img = (await sharp(image).resize(800).toBuffer()).toString('base64');
   
-  await spotifyApi.uploadCustomPlaylistCoverImage(playlistId, compressed_img)
+  await spotifyApi.uploadCustomPlaylistCoverImage(playlistId, image.toString('base64'))
     .then(() => {}, err => {
       console.log('Failed to add custom playlist cover image', err);
     });
@@ -202,7 +200,7 @@ app.post('/upload', (req, res) => {
         return res.send(err);
     }
 
-    let image = Buffer.from(req.file.buffer);
+    let image = (await sharp(Buffer.from(req.file.buffer)).resize(800).toBuffer());
   
     getColors(image, req.file.mimetype)
       .then(async colors => {

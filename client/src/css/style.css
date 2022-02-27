@@ -51,18 +51,6 @@ body {
 
 .home a {
     background-color: #EDFFFC;
-    border: none;
-    padding-top: 3%;
-    padding-bottom: 3%;
-    padding-left: 9%;
-    padding-right: 9%;
-
-    color: #6D716E;
-    font-size: 25px;
-    font-family: "Ubuntu Condensed", sans-serif;
-
-    box-shadow: 4px 4px 15px 1px #6D716E45;
-    text-decoration: none;
 }
 
 .home #logo {
@@ -119,8 +107,7 @@ body {
     margin-bottom: 6%;
 }
 
-.upload #upload-btn {
-    background-color: #CCE4E0;
+.btn {
     border: none;
     padding-top: 3%;
     padding-bottom: 3%;
@@ -132,6 +119,15 @@ body {
     font-family: "Ubuntu Condensed", sans-serif;
 
     box-shadow: 4px 4px 15px 1px #6D716E45;
+    text-decoration: none;
+}
+
+#upload-btn {
+    background-color: #CCE4E0;
+}
+
+#upload-btn:hover {
+    cursor: pointer;
 }
 
 .upload input[type="file"] {
