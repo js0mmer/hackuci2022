@@ -8,7 +8,7 @@
 ### What does it do?
 Play pic takes an image from the user and uses multiple APIs to generate the perfect Spotify playlist that fits the color scheme of the image.
 
-<a href="https://en.wikipedia.org/wiki/Poo" target="_blank">Check it out here!</a>
+<a href="https://playpic.herokuapp.com/" target="_blank">Check it out here!</a>
 
 <!---
 change the hyperlink URL
