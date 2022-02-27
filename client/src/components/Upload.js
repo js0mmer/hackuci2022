@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "../css/upload.css";
 
 function Upload() {
   let [searchParams] = useSearchParams();

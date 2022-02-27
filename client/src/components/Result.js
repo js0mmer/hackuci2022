@@ -7,7 +7,7 @@ function Result() {
   let id = decodeURIComponent(searchParams.get("id"));
 
   return (
-    <div>
+    <div className="playlist">
       <header>
         <h1 id="title">
           <img
@@ -21,24 +21,30 @@ function Result() {
         </h1>
       </header>
 
-      <main>
-        <iframe
-          style={{ borderRadius: "12px" }}
-          title="Playlist"
-          src={`https://open.spotify.com/embed/playlist/${id}?utm_source=generator`}
-          width={"100%"}
-          height={380}
-          frameBorder={0}
-          allowFullScreen={false}
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        ></iframe>
-        <h2>
-          Based on your image,
-          <br />
-          here is a playlist made
-          <br />
-          just for you
-        </h2>
+      <main className="container">
+        <div className="row">
+          <div className="col-md-6">
+            <h2>
+              Based on your image,
+              <br />
+              here is a playlist made
+              <br />
+              just for you
+            </h2>
+          </div>
+          <div className="col-md-6">
+            <iframe
+              style={{ borderRadius: "12px" }}
+              title="Playlist"
+              src={`https://open.spotify.com/embed/playlist/${id}?utm_source=generator`}
+              width="93.5%"
+              height={380}
+              frameBorder={0}
+              allowFullScreen={false}
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            ></iframe>
+          </div>
+        </div>
       </main>
     </div>
   );
