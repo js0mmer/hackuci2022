@@ -186,7 +186,7 @@ app.post('/upload', (req, res) => {
   // 'image' is the name of our file input field in the HTML form
   let upload = multer({ /* storage: storage, */ fileFilter: imageFilter }).single('image');
 
-  upload(req, res, err => {
+  upload(req, res, async err => {
     // req.file contains information of uploaded file
     // req.body contains information of text fields, if there were any
 
@@ -200,7 +200,7 @@ app.post('/upload', (req, res) => {
         return res.send(err);
     }
 
-    let image = (await sharp(Buffer.from(req.file.buffer)).resize(800).toBuffer());
+    let image = await sharp(Buffer.from(req.file.buffer)).resize(800).toBuffer();
   
     getColors(image, req.file.mimetype)
       .then(async colors => {

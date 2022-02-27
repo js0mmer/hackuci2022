@@ -122,6 +122,13 @@ body {
     text-decoration: none;
 }
 
+.btn:hover {
+    transform: translateY(10px);
+    box-shadow: 8px 8px 15px 5px #6D716E45;
+    transition: ease;
+    /* border: #6D716E45 1px solid; */
+}
+
 #upload-btn {
     background-color: #CCE4E0;
 }
