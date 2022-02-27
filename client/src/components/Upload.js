@@ -10,6 +10,7 @@ class Upload extends React.Component {
         if (event.target.files && event.target.files[0]) {
             let img = event.target.files[0];
             let imgURL = URL.createObjectURL(img);
+            console.log(imgURL);
             // this.setState({
             //   image: URL.createObjectURL(img)
             // });
