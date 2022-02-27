@@ -4,6 +4,12 @@ body {
     font-family: "Roboto Condensed", sans-serif;
 }
 
+header {
+    position: static;
+    top: 42
+    left: 103
+}
+
 h1 {
     color: #BD6838;
 
